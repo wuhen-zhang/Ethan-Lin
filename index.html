@@ -70,22 +70,6 @@
   .tag { padding: 6px 14px; border: 1px solid var(--border); border-radius: 40px; font-size: 11px; letter-spacing: 0.1em; color: var(--mid); transition: border-color 0.2s, color 0.2s; }
   .tag:hover { border-color: var(--gold); color: var(--gold); }
 
-  /* VIDEOS */
-  #videos { background: var(--charcoal); }
-  .videos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-  .video-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; transition: border-color 0.3s; }
-  .video-card:hover { border-color: rgba(201,169,110,0.4); }
-  .video-placeholder { aspect-ratio: 16/9; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; position: relative; overflow: hidden; }
-  .video-placeholder video { position: absolute; inset: 0; width: 100%; height: 100%; display: none; object-fit: cover; }
-  .video-ui { display: flex; flex-direction: column; align-items: center; gap: 16px; transition: opacity 0.3s; }
-  .video-play-icon { width: 64px; height: 64px; border: 1.5px solid rgba(201,169,110,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.3s, transform 0.3s; }
-  .video-card:hover .video-play-icon { border-color: var(--gold); transform: scale(1.1); }
-  .video-play-triangle { width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid rgba(201,169,110,0.7); margin-left: 4px; }
-  .video-filename { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); }
-  .video-info { padding: 20px 24px; }
-  .video-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
-  .video-meta { font-size: 11px; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); text-transform: uppercase; }
-
   /* FOOTER */
   footer { background: var(--charcoal); border-top: 1px solid rgba(255,255,255,0.06); padding: 48px 80px; display: flex; align-items: center; justify-content: space-between; }
   .footer-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; color: var(--cream); letter-spacing: 0.15em; }
@@ -535,46 +519,240 @@
   </div>
 </section>
 
-<!-- VIDEOS -->
-<section id="videos">
+<!-- VIDEOS — React -->
+<section id="videos" style="background: var(--charcoal); padding: 100px 80px;">
   <div class="section-header">
     <span class="section-num">03</span>
     <span class="section-title" style="color:var(--cream);">個人影片</span>
     <span class="section-title-en">Video</span>
   </div>
-  <div class="videos-grid">
-    <div class="video-card">
-      <div class="video-placeholder">
-        <video id="vid1" controls preload="none" src="videos/各角度影片.mp4"></video>
-        <div class="video-ui" id="ui1">
-          <div class="video-play-icon">
-            <div class="video-play-triangle"></div>
-          </div>
-          <div class="video-filename">各角度影片.mp4</div>
-        </div>
-      </div>
-      <div class="video-info">
-        <div class="video-title">各角度展示</div>
-        <div class="video-meta">16 : 9 · HD VIDEO</div>
-      </div>
-    </div>
-    <div class="video-card">
-      <div class="video-placeholder">
-        <video id="vid2" controls preload="none" src="videos/自我介紹.mp4"></video>
-        <div class="video-ui" id="ui2">
-          <div class="video-play-icon">
-            <div class="video-play-triangle"></div>
-          </div>
-          <div class="video-filename">自我介紹.mp4</div>
-        </div>
-      </div>
-      <div class="video-info">
-        <div class="video-title">自我介紹</div>
-        <div class="video-meta">16 : 9 · HD VIDEO</div>
-      </div>
-    </div>
-  </div>
+  <div id="video-viewer-root"></div>
 </section>
+
+<script>
+(function() {
+  const { useState, useEffect, useRef, useCallback } = React;
+
+  const VIDEOS = [
+    { src: 'videos/自我介紹.mp4',   title: '自我介紹',   titleEn: 'Self Introduction', thumb: 'images/closeup.png' },
+    { src: 'videos/各角度影片.mp4', title: '各角度展示', titleEn: 'All Angles',         thumb: 'images/front.png'   },
+  ];
+
+  const gold     = '#C9A96E';
+  const cream    = '#F5F0E8';
+  const charcoal = '#1A1916';
+  const midDark  = 'rgba(255,255,255,0.35)';
+
+  function VideoViewer() {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [lightbox, setLightbox]       = useState(false);
+    const [lbFade, setLbFade]           = useState(false);
+    const [previewFade, setPreviewFade] = useState(true);
+    const mainVideoRef = useRef(null);
+    const lbVideoRef   = useRef(null);
+
+    const active = VIDEOS[activeIndex];
+
+    const selectThumb = (i) => {
+      if (i === activeIndex) return;
+      if (mainVideoRef.current) { mainVideoRef.current.pause(); mainVideoRef.current.load(); }
+      setPreviewFade(false);
+      setTimeout(() => { setActiveIndex(i); setPreviewFade(true); }, 140);
+    };
+
+    const openLightbox = () => {
+      if (mainVideoRef.current) mainVideoRef.current.pause();
+      setLightbox(true);
+      setTimeout(() => setLbFade(true), 10);
+    };
+
+    const closeLightbox = useCallback(() => {
+      if (lbVideoRef.current) { lbVideoRef.current.pause(); lbVideoRef.current.load(); }
+      setLbFade(false);
+      setTimeout(() => setLightbox(false), 280);
+    }, []);
+
+    useEffect(() => {
+      if (!lightbox) return;
+      const h = (e) => { if (e.key === 'Escape') closeLightbox(); };
+      window.addEventListener('keydown', h);
+      return () => window.removeEventListener('keydown', h);
+    }, [lightbox, closeLightbox]);
+
+    const R = React.createElement;
+
+    return R('div', { style: { fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 300 } },
+
+      /* ── MAIN PREVIEW ── */
+      R('div', {
+        style: {
+          width: '100%', position: 'relative', borderRadius: 4,
+          overflow: 'hidden', marginBottom: 20,
+          background: 'rgba(0,0,0,0.5)',
+          opacity: previewFade ? 1 : 0,
+          transition: 'opacity 0.18s ease',
+          cursor: 'zoom-in',
+        },
+        onClick: openLightbox,
+      },
+        R('div', { style: { aspectRatio: '16/9', position: 'relative' } },
+          R('video', {
+            key: active.src,
+            ref: mainVideoRef,
+            src: active.src,
+            controls: true,
+            preload: 'metadata',
+            onClick: (e) => e.stopPropagation(),
+            style: { width: '100%', height: '100%', display: 'block', objectFit: 'contain' },
+          }),
+          /* expand hint */
+          R('div', {
+            style: {
+              position: 'absolute', top: 12, right: 14,
+              background: 'rgba(26,25,22,0.5)', backdropFilter: 'blur(4px)',
+              borderRadius: 40, padding: '5px 12px',
+              display: 'flex', alignItems: 'center', gap: 6,
+              pointerEvents: 'none',
+            }
+          },
+            R('span', { style: { fontSize: 16, color: 'rgba(255,255,255,0.7)' } }, '⤢'),
+            R('span', { style: { fontSize: 10, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', fontFamily: "'DM Mono', monospace" } }, 'FULLSCREEN')
+          ),
+          /* title badge */
+          R('div', {
+            style: {
+              position: 'absolute', bottom: 14, left: 16,
+              background: 'rgba(26,25,22,0.55)', backdropFilter: 'blur(4px)',
+              borderRadius: 40, padding: '6px 16px',
+              display: 'flex', alignItems: 'center', gap: 10,
+            }
+          },
+            R('span', { style: { fontSize: 13, color: cream, letterSpacing: '0.05em' } }, active.title),
+            R('span', { style: { fontSize: 10, color: gold, letterSpacing: '0.2em', fontFamily: "'DM Mono', monospace", textTransform: 'uppercase' } }, active.titleEn)
+          )
+        )
+      ),
+
+      /* ── THUMBNAILS ── */
+      R('div', { style: { display: 'flex', gap: 12 } },
+        VIDEOS.map((v, i) =>
+          R('div', {
+            key: v.src,
+            onClick: () => selectThumb(i),
+            style: {
+              flex: '0 0 auto', width: 160, cursor: 'pointer',
+              border: i === activeIndex ? `2px solid ${gold}` : '2px solid rgba(255,255,255,0.08)',
+              borderRadius: 4, overflow: 'hidden',
+              opacity: i === activeIndex ? 1 : 0.5,
+              transition: 'border-color 0.2s, opacity 0.2s',
+            }
+          },
+            /* thumb image */
+            R('div', { style: { aspectRatio: '16/9', position: 'relative', background: '#111', overflow: 'hidden' } },
+              R('img', {
+                src: v.thumb, alt: v.title,
+                style: { width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block', opacity: 0.6 }
+              }),
+              R('div', {
+                style: {
+                  position: 'absolute', inset: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }
+              },
+                R('div', {
+                  style: {
+                    width: 32, height: 32,
+                    border: `1.5px solid ${i === activeIndex ? gold : 'rgba(255,255,255,0.5)'}`,
+                    borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }
+                },
+                  R('div', {
+                    style: {
+                      width: 0, height: 0,
+                      borderTop: '6px solid transparent',
+                      borderBottom: '6px solid transparent',
+                      borderLeft: `10px solid ${i === activeIndex ? gold : 'rgba(255,255,255,0.6)'}`,
+                      marginLeft: 2,
+                    }
+                  })
+                )
+              )
+            ),
+            /* label */
+            R('div', { style: { padding: '8px 12px', background: 'rgba(255,255,255,0.03)' } },
+              R('div', { style: { fontSize: 13, color: i === activeIndex ? cream : 'rgba(255,255,255,0.5)', letterSpacing: '0.04em' } }, v.title),
+              R('div', { style: { fontSize: 9, color: i === activeIndex ? gold : 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', fontFamily: "'DM Mono', monospace", textTransform: 'uppercase', marginTop: 2 } }, v.titleEn)
+            )
+          )
+        )
+      ),
+
+      /* ── LIGHTBOX ── */
+      lightbox && R('div', {
+        onClick: closeLightbox,
+        style: {
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: `rgba(8,7,5,${lbFade ? 0.97 : 0})`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '40px 80px',
+          transition: 'background 0.28s ease',
+        }
+      },
+        /* close */
+        R('button', {
+          onClick: closeLightbox,
+          style: {
+            position: 'absolute', top: 24, right: 32,
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: 'rgba(255,255,255,0.7)', fontSize: 32,
+            fontFamily: "'Cormorant Garamond', serif", lineHeight: 1,
+          }
+        }, '×'),
+
+        /* video */
+        R('div', {
+          onClick: (e) => e.stopPropagation(),
+          style: {
+            width: '90vw', maxWidth: 1100,
+            opacity: lbFade ? 1 : 0,
+            transform: lbFade ? 'scale(1)' : 'scale(0.97)',
+            transition: 'opacity 0.28s ease, transform 0.28s ease',
+          }
+        },
+          R('video', {
+            key: 'lb-' + active.src,
+            ref: lbVideoRef,
+            src: active.src,
+            controls: true,
+            autoPlay: true,
+            preload: 'auto',
+            style: {
+              width: '100%', aspectRatio: '16/9',
+              display: 'block', borderRadius: 4,
+              boxShadow: '0 32px 80px rgba(0,0,0,0.8)',
+            }
+          }),
+          R('div', {
+            style: {
+              marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12
+            }
+          },
+            R('span', { style: { fontSize: 15, color: cream, letterSpacing: '0.05em', fontFamily: "'Cormorant Garamond', serif" } }, active.title),
+            R('span', { style: { fontSize: 10, color: gold, letterSpacing: '0.2em', fontFamily: "'DM Mono', monospace" } }, active.titleEn),
+            R('span', { style: { fontSize: 10, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.15em', fontFamily: "'DM Mono', monospace" } }, `${activeIndex + 1} / ${VIDEOS.length}`)
+          )
+        )
+      )
+    );
+  }
+
+  const vroot = ReactDOM.createRoot(document.getElementById('video-viewer-root'));
+  vroot.render(R(VideoViewer));
+
+  function R(...args) { return React.createElement(...args); }
+})();
+</script>
 
 <!-- FOOTER -->
 <footer>
@@ -587,19 +765,6 @@
 </footer>
 
 <script>
-  // VIDEO PLAY
-  function setupVideo(vidId, uiId) {
-    var vid = document.getElementById(vidId);
-    var ui  = document.getElementById(uiId);
-    ui.addEventListener('click', function() {
-      vid.style.display = 'block';
-      ui.style.display = 'none';
-      vid.play();
-    });
-  }
-  setupVideo('vid1', 'ui1');
-  setupVideo('vid2', 'ui2');
-
   // SCROLL REVEAL
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
@@ -609,7 +774,7 @@
       }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.video-card, .measurement-row').forEach(function(el) {
+  document.querySelectorAll('.measurement-row').forEach(function(el) {
     el.style.opacity = '0';
     observer.observe(el);
   });
