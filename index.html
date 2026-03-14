@@ -55,29 +55,6 @@
   .section-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; letter-spacing: 0.05em; }
   .section-title-en { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--light-mid); letter-spacing: 0.15em; }
 
-  /* PHOTOS */
-  #photos { background: var(--cream); }
-  .photo-grid { columns: 3; column-gap: 12px; }
-  .photo-item { break-inside: avoid; margin-bottom: 12px; position: relative; cursor: pointer; overflow: hidden; border-radius: 2px; }
-  .photo-item img { width: 100%; display: block; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
-  .photo-item:hover img { transform: scale(1.04); }
-  .photo-overlay { position: absolute; inset: 0; background: rgba(26,25,22,0); transition: background 0.3s; display: flex; align-items: center; justify-content: center; }
-  .photo-item:hover .photo-overlay { background: rgba(26,25,22,0.25); }
-  .photo-zoom-icon { opacity: 0; transition: opacity 0.3s; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
-  .photo-item:hover .photo-zoom-icon { opacity: 1; }
-
-  /* LIGHTBOX */
-  .lightbox { position: fixed; inset: 0; z-index: 999; background: rgba(15,13,10,0.95); display: none; align-items: center; justify-content: center; padding: 40px; cursor: zoom-out; }
-  .lightbox.active { display: flex; }
-  .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 2px; box-shadow: 0 32px 80px rgba(0,0,0,0.6); animation: lightboxIn 0.3s ease; }
-  .lightbox-close { position: absolute; top: 24px; right: 32px; color: rgba(255,255,255,0.7); font-size: 32px; cursor: pointer; background: none; border: none; font-family: 'Cormorant Garamond', serif; transition: color 0.2s; line-height: 1; }
-  .lightbox-close:hover { color: white; }
-  .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); font-size: 40px; cursor: pointer; background: none; border: none; font-family: 'Cormorant Garamond', serif; padding: 16px; transition: color 0.2s; user-select: none; }
-  .lightbox-nav:hover { color: white; }
-  .lightbox-prev { left: 16px; }
-  .lightbox-next { right: 16px; }
-  .lightbox-counter { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: rgba(255,255,255,0.4); }
-
   /* PROFILE */
   .profile-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
   .profile-image-wrap { position: relative; aspect-ratio: 3/4; overflow: hidden; border-radius: 2px; }
@@ -176,81 +153,334 @@
   </div>
 </div>
 
-<!-- PHOTOS -->
-<section id="photos">
+<!-- PHOTOS — React + Tailwind -->
+<section id="photos" style="background: var(--cream); padding: 100px 80px;">
   <div class="section-header">
     <span class="section-num">01</span>
     <span class="section-title">個人照片</span>
     <span class="section-title-en">Photos</span>
   </div>
-  <div class="photo-grid" id="photoGrid">
-    <div class="photo-item" data-src="images/front.png">
-      <img src="images/front.png" alt="正面照">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/left-45.png">
-      <img src="images/left-45.png" alt="左45度">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/left-90.png">
-      <img src="images/left-90.png" alt="左90度">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/right-45.png">
-      <img src="images/right-45.png" alt="右45度">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/right-90.png">
-      <img src="images/right-90.png" alt="右90度">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/half-body-landscape.png">
-      <img src="images/half-body-landscape.png" alt="半身橫式">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/angle-up.png">
-      <img src="images/angle-up.png" alt="仰視">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/angle-top.png">
-      <img src="images/angle-top.png" alt="俯視">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/basketball-cap-half.png">
-      <img src="images/basketball-cap-half.png" alt="籃球帽T半身">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/basketball-cap-full.png">
-      <img src="images/basketball-cap-full.png" alt="籃球帽T全身">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/street-style.png">
-      <img src="images/street-style.png" alt="新北街頭機能風">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/urban-style.png">
-      <img src="images/urban-style.png" alt="都會時髦精緻風">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/basketball-1.png">
-      <img src="images/basketball-1.png" alt="籃球1">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-    <div class="photo-item" data-src="images/basketball-2.png">
-      <img src="images/basketball-2.png" alt="籃球2">
-      <div class="photo-overlay"><div class="photo-zoom-icon">+</div></div>
-    </div>
-  </div>
+  <div id="photo-viewer-root"></div>
 </section>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox">
-  <button class="lightbox-close" id="lightboxClose">×</button>
-  <button class="lightbox-nav lightbox-prev" id="lightboxPrev">‹</button>
-  <img src="" alt="" id="lightboxImg">
-  <button class="lightbox-nav lightbox-next" id="lightboxNext">›</button>
-  <div class="lightbox-counter" id="lightboxCounter"></div>
-</div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<script>
+(function() {
+  const { useState, useEffect, useCallback } = React;
+
+  const CATEGORIES = [
+    {
+      id: 'studio',
+      label: '棚拍照',
+      labelEn: 'Studio',
+      photos: [
+        { src: 'images/front.png',              alt: '正面照' },
+        { src: 'images/left-45.png',            alt: '左 45°' },
+        { src: 'images/left-90.png',            alt: '左 90°' },
+        { src: 'images/right-45.png',           alt: '右 45°' },
+        { src: 'images/right-90.png',           alt: '右 90°' },
+        { src: 'images/half-body-landscape.png',alt: '半身橫式' },
+        { src: 'images/angle-up.png',           alt: '仰視' },
+        { src: 'images/angle-top.png',          alt: '俯視' },
+      ]
+    },
+    {
+      id: 'lifestyle',
+      label: '生活照',
+      labelEn: 'Lifestyle',
+      photos: [
+        { src: 'images/basketball-cap-half.png', alt: '籃球帽T半身' },
+        { src: 'images/basketball-cap-full.png', alt: '籃球帽T全身' },
+        { src: 'images/street-style.png',        alt: '新北街頭機能風' },
+        { src: 'images/urban-style.png',         alt: '都會時髦精緻風' },
+        { src: 'images/basketball-1.png',        alt: '籃球 1' },
+        { src: 'images/basketball-2.png',        alt: '籃球 2' },
+      ]
+    }
+  ];
+
+  function PhotoViewer() {
+    const [activeTab, setActiveTab]       = useState('studio');
+    const [activeIndex, setActiveIndex]   = useState(0);
+    const [lightbox, setLightbox]         = useState(false);
+    const [lbFade, setLbFade]             = useState(false);
+    const [previewFade, setPreviewFade]   = useState(true);
+
+    const category  = CATEGORIES.find(c => c.id === activeTab);
+    const photos    = category.photos;
+    const active    = photos[activeIndex] || photos[0];
+
+    const switchTab = (id) => {
+      setActiveTab(id);
+      setActiveIndex(0);
+      setPreviewFade(false);
+      setTimeout(() => setPreviewFade(true), 50);
+    };
+
+    const selectThumb = (i) => {
+      if (i === activeIndex) return;
+      setPreviewFade(false);
+      setTimeout(() => { setActiveIndex(i); setPreviewFade(true); }, 120);
+    };
+
+    const openLightbox = () => {
+      setLightbox(true);
+      setTimeout(() => setLbFade(true), 10);
+    };
+
+    const closeLightbox = useCallback(() => {
+      setLbFade(false);
+      setTimeout(() => setLightbox(false), 280);
+    }, []);
+
+    const lbNav = useCallback((dir) => {
+      setActiveIndex(i => (i + dir + photos.length) % photos.length);
+    }, [photos.length]);
+
+    useEffect(() => {
+      if (!lightbox) return;
+      const handler = (e) => {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft')  lbNav(-1);
+        if (e.key === 'ArrowRight') lbNav(1);
+      };
+      window.addEventListener('keydown', handler);
+      return () => window.removeEventListener('keydown', handler);
+    }, [lightbox, closeLightbox, lbNav]);
+
+    const gold = '#C9A96E';
+    const charcoal = '#1A1916';
+    const cream = '#F5F0E8';
+    const mid = '#4A4642';
+    const lightMid = '#8A857E';
+
+    return React.createElement('div', { style: { fontFamily: "'Noto Sans TC', sans-serif", fontWeight: 300 } },
+
+      /* ── TAB BAR ── */
+      React.createElement('div', {
+        style: { display: 'flex', gap: 0, marginBottom: 40, borderBottom: `1px solid rgba(26,25,22,0.12)` }
+      },
+        CATEGORIES.map(cat =>
+          React.createElement('button', {
+            key: cat.id,
+            onClick: () => switchTab(cat.id),
+            style: {
+              padding: '12px 32px',
+              background: 'none',
+              border: 'none',
+              borderBottom: activeTab === cat.id ? `2px solid ${gold}` : '2px solid transparent',
+              cursor: 'pointer',
+              marginBottom: -1,
+              transition: 'all 0.25s',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: 2,
+            }
+          },
+            React.createElement('span', {
+              style: {
+                fontSize: 15,
+                letterSpacing: '0.05em',
+                color: activeTab === cat.id ? charcoal : lightMid,
+                fontWeight: activeTab === cat.id ? 400 : 300,
+                transition: 'color 0.25s',
+              }
+            }, cat.label),
+            React.createElement('span', {
+              style: {
+                fontSize: 10,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: activeTab === cat.id ? gold : 'rgba(138,133,126,0.5)',
+                fontFamily: "'DM Mono', monospace",
+                transition: 'color 0.25s',
+              }
+            }, cat.labelEn)
+          )
+        )
+      ),
+
+      /* ── PREVIEW ── */
+      React.createElement('div', {
+        style: {
+          width: '100%',
+          maxHeight: 620,
+          overflow: 'hidden',
+          borderRadius: 2,
+          marginBottom: 20,
+          cursor: 'zoom-in',
+          position: 'relative',
+          background: '#EDE8DF',
+        },
+        onClick: openLightbox,
+      },
+        React.createElement('img', {
+          src: active.src,
+          alt: active.alt,
+          style: {
+            width: '100%',
+            maxHeight: 620,
+            objectFit: 'contain',
+            objectPosition: 'center top',
+            display: 'block',
+            opacity: previewFade ? 1 : 0,
+            transition: 'opacity 0.18s ease',
+          }
+        }),
+        React.createElement('div', {
+          style: {
+            position: 'absolute', bottom: 16, right: 20,
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: 'rgba(26,25,22,0.45)',
+            backdropFilter: 'blur(6px)',
+            padding: '6px 14px',
+            borderRadius: 40,
+          }
+        },
+          React.createElement('span', {
+            style: { fontSize: 11, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.8)' }
+          }, active.alt),
+          React.createElement('span', {
+            style: { fontSize: 11, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em' }
+          }, `${activeIndex + 1} / ${photos.length}`)
+        ),
+        React.createElement('div', {
+          style: {
+            position: 'absolute', top: 16, right: 20,
+            width: 36, height: 36,
+            border: '1px solid rgba(255,255,255,0.5)',
+            borderRadius: '50%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: 18,
+            background: 'rgba(26,25,22,0.25)',
+          }
+        }, '+')
+      ),
+
+      /* ── THUMBNAILS ── */
+      React.createElement('div', {
+        style: {
+          display: 'flex',
+          gap: 10,
+          overflowX: 'auto',
+          paddingBottom: 4,
+          scrollbarWidth: 'thin',
+          scrollbarColor: `${gold} transparent`,
+        }
+      },
+        photos.map((photo, i) =>
+          React.createElement('div', {
+            key: photo.src,
+            onClick: () => selectThumb(i),
+            style: {
+              flex: '0 0 auto',
+              width: 90,
+              height: 110,
+              overflow: 'hidden',
+              borderRadius: 2,
+              cursor: 'pointer',
+              border: i === activeIndex
+                ? `2px solid ${gold}`
+                : '2px solid transparent',
+              transition: 'border-color 0.2s, opacity 0.2s',
+              opacity: i === activeIndex ? 1 : 0.6,
+              background: '#EDE8DF',
+            }
+          },
+            React.createElement('img', {
+              src: photo.src,
+              alt: photo.alt,
+              style: { width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }
+            })
+          )
+        )
+      ),
+
+      /* ── LIGHTBOX ── */
+      lightbox && React.createElement('div', {
+        onClick: closeLightbox,
+        style: {
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: `rgba(15,13,10,${lbFade ? 0.95 : 0})`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 40,
+          cursor: 'zoom-out',
+          transition: 'background 0.28s ease',
+        }
+      },
+        /* close btn */
+        React.createElement('button', {
+          onClick: closeLightbox,
+          style: {
+            position: 'absolute', top: 24, right: 32,
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: 'rgba(255,255,255,0.7)', fontSize: 32,
+            fontFamily: "'Cormorant Garamond', serif",
+            lineHeight: 1, transition: 'color 0.2s',
+          }
+        }, '×'),
+
+        /* prev */
+        React.createElement('button', {
+          onClick: (e) => { e.stopPropagation(); lbNav(-1); },
+          style: {
+            position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: 'rgba(255,255,255,0.6)', fontSize: 48,
+            fontFamily: "'Cormorant Garamond', serif",
+            padding: 16, transition: 'color 0.2s',
+          }
+        }, '‹'),
+
+        /* image */
+        React.createElement('img', {
+          src: active.src,
+          alt: active.alt,
+          onClick: (e) => e.stopPropagation(),
+          style: {
+            maxWidth: '90vw', maxHeight: '90vh',
+            objectFit: 'contain',
+            borderRadius: 2,
+            boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+            opacity: lbFade ? 1 : 0,
+            transform: lbFade ? 'scale(1)' : 'scale(0.96)',
+            transition: 'opacity 0.28s ease, transform 0.28s ease',
+          }
+        }),
+
+        /* next */
+        React.createElement('button', {
+          onClick: (e) => { e.stopPropagation(); lbNav(1); },
+          style: {
+            position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: 'rgba(255,255,255,0.6)', fontSize: 48,
+            fontFamily: "'Cormorant Garamond', serif",
+            padding: 16, transition: 'color 0.2s',
+          }
+        }, '›'),
+
+        /* counter */
+        React.createElement('div', {
+          style: {
+            position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+            fontFamily: "'DM Mono', monospace", fontSize: 11,
+            letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)',
+          }
+        }, `${activeIndex + 1} / ${photos.length}`)
+      )
+    );
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById('photo-viewer-root'));
+  root.render(React.createElement(PhotoViewer));
+})();
+</script>
 
 <!-- PROFILE -->
 <section id="profile">
@@ -357,46 +587,6 @@
 </footer>
 
 <script>
-  // LIGHTBOX
-  const photos = Array.from(document.querySelectorAll('.photo-item'));
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  const lightboxCounter = document.getElementById('lightboxCounter');
-  let currentIndex = 0;
-
-  function openLightbox(index) {
-    currentIndex = index;
-    lightboxImg.src = photos[index].dataset.src;
-    lightboxCounter.textContent = (index + 1) + ' / ' + photos.length;
-    lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeLightbox() {
-    lightbox.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  function navigate(dir) {
-    currentIndex = (currentIndex + dir + photos.length) % photos.length;
-    lightboxImg.style.opacity = 0;
-    setTimeout(function() {
-      lightboxImg.src = photos[currentIndex].dataset.src;
-      lightboxImg.style.opacity = 1;
-    }, 150);
-    lightboxCounter.textContent = (currentIndex + 1) + ' / ' + photos.length;
-  }
-
-  photos.forEach(function(el, i) { el.addEventListener('click', function() { openLightbox(i); }); });
-  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
-  document.getElementById('lightboxPrev').addEventListener('click', function(e) { e.stopPropagation(); navigate(-1); });
-  document.getElementById('lightboxNext').addEventListener('click', function(e) { e.stopPropagation(); navigate(1); });
-  lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
-  document.addEventListener('keydown', function(e) {
-    if (!lightbox.classList.contains('active')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') navigate(-1);
-    if (e.key === 'ArrowRight') navigate(1);
-  });
-
   // VIDEO PLAY
   function setupVideo(vidId, uiId) {
     var vid = document.getElementById(vidId);
@@ -419,7 +609,7 @@
       }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.photo-item, .video-card, .measurement-row').forEach(function(el) {
+  document.querySelectorAll('.video-card, .measurement-row').forEach(function(el) {
     el.style.opacity = '0';
     observer.observe(el);
   });
